@@ -2,7 +2,7 @@ package frc.robot.commands
 
 import edu.wpi.first.wpilibj.XboxController
 import edu.wpi.first.wpilibj2.command.Command
-import frc.robot.subsystems.Swerve
+import frc.robot.subsystems.drive.Swerve
 import frc.robot.utils.RobotParameters.MotorParameters.MAX_ANGULAR_SPEED
 import frc.robot.utils.RobotParameters.MotorParameters.MAX_SPEED
 import frc.robot.utils.RobotParameters.SwerveParameters.Thresholds.X_DEADZONE

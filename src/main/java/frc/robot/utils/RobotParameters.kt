@@ -25,13 +25,9 @@ object RobotParameters {
         const val FRONT_RIGHT_CAN_CODER_ID: Int = 10
         const val BACK_LEFT_CAN_CODER_ID: Int = 11
         const val BACK_RIGHT_CAN_CODER_ID: Int = 12
-        const val ELEVATOR_MOTOR_LEFT_ID: Int = 13
-        const val ELEVATOR_MOTOR_RIGHT_ID: Int = 14
-        const val PIVOT_MOTOR_ID: Int = 15
-        const val PIDGEY_ID: Int = 16
-        const val END_EFFECTOR_MOTOR_ID: Int = 17
-        const val CORAL_MANIPULATOR_MOTOR_UP_ID: Int = 18
-        const val CORAL_MANIPULATOR_MOTOR_DOWN_ID: Int = 19
+        const val PIDGEY_ID: Int = 13
+        const val INTAKING_MOTOR_ID: Int = 14
+        const val INTAKE_PIVOT_MOTOR_ID: Int = 15
 
         // Motor Property Values
         const val MAX_SPEED: Double = 5.76

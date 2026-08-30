@@ -1,14 +1,16 @@
 package frc.robot
 
-import edu.wpi.first.wpilibj.PowerDistribution
-import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.CommandScheduler
 import org.littletonrobotics.junction.LogFileUtil
-import org.littletonrobotics.junction.LoggedRobot
+import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger
 import org.littletonrobotics.junction.networktables.NT4Publisher
 import org.littletonrobotics.junction.wpilog.WPILOGReader
 import org.littletonrobotics.junction.wpilog.WPILOGWriter
+import org.wpilib.command3.Command
+import org.wpilib.command3.Scheduler
+import org.wpilib.command3.SchedulerEvent
+import org.wpilib.hardware.power.PowerDistribution
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -24,14 +26,14 @@ class Robot : LoggedRobot() {
      * This function is run when the robot is first started up and should be used for any
      * initialization code.
      */
-    override fun robotInit() {
+    fun robotInit() {
         Logger.recordMetadata("Reefscape", "Logging") // Set a metadata value
 
         if (isReal()) {
             // Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
             Logger.addDataReceiver(NT4Publisher()) // Publish data to NetworkTables
             // WARNING: PowerDistribution resource leak
-            PowerDistribution(1, PowerDistribution.ModuleType.kRev) // Enables power distribution logging
+            PowerDistribution(1, 1, PowerDistribution.ModuleType.REV) // Enables power distribution logging
         } else {
             setUseTiming(false) // Run as fast as possible
             val logPath =
@@ -58,8 +60,9 @@ class Robot : LoggedRobot() {
      * SmartDashboard integrated updating.
      */
     override fun robotPeriodic() {
-        CommandScheduler.getInstance().run()
+        Scheduler.getDefault().run()
     }
+
 
     /** This autonomous runs the autonomous command selected by your [RobotContainer] class.  */
     override fun autonomousInit() {
