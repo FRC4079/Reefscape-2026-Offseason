@@ -1,39 +1,29 @@
 package frc.robot.subsystems.drive
 
+import com.ctre.phoenix6.CANBus.systemcore
 import com.ctre.phoenix6.hardware.Pigeon2
 import com.pathplanner.lib.auto.AutoBuilder
 import com.pathplanner.lib.config.PIDConstants
 import com.pathplanner.lib.controllers.PPHolonomicDriveController
 import com.pathplanner.lib.path.PathConstraints
 import com.pathplanner.lib.path.PathPlannerPath
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator
-import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.math.kinematics.ChassisSpeeds
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics
-import edu.wpi.first.math.kinematics.SwerveModulePosition
-import edu.wpi.first.math.kinematics.SwerveModuleState
-import edu.wpi.first.math.util.Units
-import edu.wpi.first.wpilibj.DriverStation
-import edu.wpi.first.wpilibj.DriverStation.Alliance
-import edu.wpi.first.wpilibj.smartdashboard.Field2d
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard
-import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.subsystems.PhotonVision
 import frc.robot.utils.RobotParameters.MotorParameters
 import frc.robot.utils.RobotParameters.SwerveParameters
 import frc.robot.utils.RobotParameters.SwerveParameters.PIDParameters
 import frc.robot.utils.RobotParameters.SwerveParameters.Thresholds.SHOULD_INVERT
-import org.photonvision.EstimatedRobotPose
-import xyz.malefic.frc.pingu.control.Pingu
-import xyz.malefic.frc.pingu.log.LogPingu.log
+import org.wpilib.command3.Mechanism
+import org.wpilib.math.estimator.SwerveDrivePoseEstimator
+import org.wpilib.math.geometry.Pose2d
+import org.wpilib.math.geometry.Rotation2d
+import org.wpilib.math.util.Units
+import org.wpilib.smartdashboard.Field2d
 import java.util.function.BooleanSupplier
 
-object Swerve : SubsystemBase() {
+object Swerve : Mechanism() {
     private val poseEstimator: SwerveDrivePoseEstimator
     private val field = Field2d()
-    private val pidgey = Pigeon2(MotorParameters.PIDGEY_ID)
+    private val pidgey = Pigeon2(MotorParameters.PIDGEY_ID, systemcore(1))
     private val states = arrayOfNulls<SwerveModuleState>(4)
     private var setStates = arrayOfNulls<SwerveModuleState>(4)
     private val modules: Array<SwerveModule>

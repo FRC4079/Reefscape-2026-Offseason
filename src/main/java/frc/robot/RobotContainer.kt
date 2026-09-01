@@ -1,16 +1,10 @@
 package frc.robot
 
-import com.pathplanner.lib.commands.PathPlannerAuto
 import frc.robot.commands.Kommand.drive
-import frc.robot.commands.Kommand.resetPidgey
-import frc.robot.commands.Kommand.setTelePid
-import frc.robot.subsystems.LED
-import frc.robot.subsystems.PhotonVision
 import frc.robot.subsystems.drive.Swerve
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 import org.wpilib.command3.Command
 import org.wpilib.driverstation.Gamepad
-
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -19,24 +13,14 @@ import org.wpilib.driverstation.Gamepad
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 class RobotContainer {
-    val pad: Gamepad = Gamepad(1)
+    val pad: Gamepad = Gamepad(0)
 
     var networkChooser: LoggedDashboardChooser<Command?> = LoggedDashboardChooser("AutoChooser")
 
-    /** The container for the robot. Contains subsystems, OI devices, and commands.  */
+    /** The container for the robot. Contains subsystems, IO devices, and commands.  */
     init {
-        CommandScheduler.getInstance().registerSubsystem(
-            Swerve,
-            LED,
-            PhotonVision,
-        )
-
-        val pad = Gamepad(0)
-
         Swerve.defaultCommand = drive(pad)
-
         configureBindings()
-
     }
 
     /**
@@ -45,7 +29,6 @@ class RobotContainer {
      * the named factories in [CommandGenericHID]'s subclasses for [ ]/[CommandPS4Controller] controllers or [CommandJoystick].
      */
     private fun configureBindings() {
-
     }
 
     val autonomousCommand: Command?
