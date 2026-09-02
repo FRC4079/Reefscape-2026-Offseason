@@ -4,7 +4,7 @@ import org.littletonrobotics.junction.AutoLog
 import org.wpilib.units.Units.*
 
 interface PivotIO {
-    @AutoLog
+//    @AutoLog
     class PivotInputs {
         var leaderPosition = Radians.zero()
         var leaderVelocity = RPM.zero()

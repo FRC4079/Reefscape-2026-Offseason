@@ -4,14 +4,18 @@ import com.ctre.phoenix6.signals.InvertedValue
 import com.pathplanner.lib.config.PIDConstants
 import com.pathplanner.lib.config.RobotConfig
 import com.pathplanner.lib.controllers.PPHolonomicDriveController
-import edu.wpi.first.math.geometry.Translation2d
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics
-import xyz.malefic.frc.pingu.control.Pingu
+import lombok.Builder
+import org.wpilib.math.controller.PIDController
+import org.wpilib.math.controller.SimpleMotorFeedforward
+import org.wpilib.math.geometry.Rotation2d
+import org.wpilib.math.geometry.Translation2d
+import org.wpilib.math.kinematics.SwerveDriveKinematics
 
 /** Class containing global values for the robot.  */
+@Suppress("PropertyName")
 object RobotParameters {
     /** Class containing global values related to motors.  */
-    object MotorParameters {
+    object CANBusParameters {
         // Motor CAN ID Values
         const val FRONT_LEFT_STEER_ID: Int = 1
         const val FRONT_LEFT_DRIVE_ID: Int = 2
@@ -28,54 +32,97 @@ object RobotParameters {
         const val PIDGEY_ID: Int = 13
         const val INTAKING_MOTOR_ID: Int = 14
         const val INTAKE_PIVOT_MOTOR_ID: Int = 15
-
-        // Motor Property Values
-        const val MAX_SPEED: Double = 5.76
-        const val MAX_ANGULAR_SPEED: Double = (14 * Math.PI) / 3
-        const val ENCODER_COUNTS_PER_ROTATION: Double = 1.0
-        const val STEER_MOTOR_GEAR_RATIO: Double = 150.0 / 7
-        const val DRIVE_MOTOR_GEAR_RATIO: Double = 6.750000000000000
-        const val WHEEL_DIAMETER: Double = 0.106
-        const val METERS_PER_REV: Double = WHEEL_DIAMETER * Math.PI * 0.975
-
-        // Limit Values
-        const val DRIVE_SUPPLY_LIMIT: Double = 45.0
-        const val DRIVE_STATOR_LIMIT: Double = 80.0
-        const val STEER_SUPPLY_LIMIT: Double = 30.0
+        const val SWERVE_CANBUS_ID: Int = 1
     }
 
     /** Class containing global values related to the swerve drive system.  */
     object SwerveParameters {
-        const val PATHPLANNER_AUTO_NAME: String = "4l4auto"
+        @Builder
+        data class ModuleConfig(
+            val driveMotorId: Int,
+            val turnMotorId: Int,
+            val encoderID: Int,
+            val encoderOffset: Rotation2d,
+            val turnInverted: Boolean,
+            val encoderInverted: Boolean,
+            val CANBus: Int,
+        )
 
-        const val AUTO_ALIGN_SWERVE_LEFT: Double = -0.1
-        const val AUTO_ALIGN_SWERVE_RIGHT: Double = 0.1
+        val MODULE_CONFIGS: Array<ModuleConfig> =
+            arrayOf(
+                // FL
+                ModuleConfig(
+                    driveMotorId = CANBusParameters.FRONT_LEFT_DRIVE_ID,
+                    turnMotorId = CANBusParameters.FRONT_LEFT_STEER_ID,
+                    encoderID = CANBusParameters.FRONT_LEFT_CAN_CODER_ID,
+                    encoderOffset = Rotation2d.fromDegrees(0.0),
+                    turnInverted = false,
+                    encoderInverted = false,
+                    CANBus = CANBusParameters.SWERVE_CANBUS_ID,
+                ),
+                // FR
+                ModuleConfig(
+                    driveMotorId = CANBusParameters.FRONT_RIGHT_DRIVE_ID,
+                    turnMotorId = CANBusParameters.FRONT_RIGHT_STEER_ID,
+                    encoderID = CANBusParameters.FRONT_RIGHT_CAN_CODER_ID,
+                    encoderOffset = Rotation2d.fromDegrees(0.0),
+                    turnInverted = false,
+                    encoderInverted = false,
+                    CANBus = CANBusParameters.SWERVE_CANBUS_ID,
+                ),
+                // BL
+                ModuleConfig(
+                    driveMotorId = CANBusParameters.BACK_LEFT_DRIVE_ID,
+                    turnMotorId = CANBusParameters.BACK_LEFT_STEER_ID,
+                    encoderID = CANBusParameters.BACK_LEFT_CAN_CODER_ID,
+                    encoderOffset = Rotation2d.fromDegrees(0.0),
+                    turnInverted = false,
+                    encoderInverted = false,
+                    CANBus = CANBusParameters.SWERVE_CANBUS_ID,
+                ),
+                // BR
+                ModuleConfig(
+                    driveMotorId = CANBusParameters.BACK_RIGHT_DRIVE_ID,
+                    turnMotorId = CANBusParameters.BACK_RIGHT_STEER_ID,
+                    encoderID = CANBusParameters.BACK_RIGHT_CAN_CODER_ID,
+                    encoderOffset = Rotation2d.fromDegrees(0.0),
+                    turnInverted = false,
+                    encoderInverted = false,
+                    CANBus = CANBusParameters.SWERVE_CANBUS_ID,
+                ),
+            )
 
         /** Class containing PID constants for the swerve drive system.  */
         object PIDParameters {
             @JvmField
-            val STEER_PID_TELE = Pingu(250.0, 0.000, 20.0, 0.0)
-
-            // val STEER_PID_AUTO = Pingu(200.0, 0.000, 20.0, 0.0)
-            @JvmField
-            val STEER_PID_AUTO = Pingu(750.0, 5.000, 15.0, 0.0)
-            // val STEER_PID_AUTO = Pingu(5.0, 0.000, 0.0, 1.0)
+            val STEER_FF = SimpleMotorFeedforward(0.2, 2.3)
 
             @JvmField
-            val DRIVE_PID_AUTO = Pingu(5.0, 0.0, 0.0, 0.4)
+            val DRIVE_FF = SimpleMotorFeedforward(0.2, 2.3)
 
             @JvmField
-            val DRIVE_PID_TELE = Pingu(5.0, 0.0, 0.0, 0.4)
+            val STEER_PID_TELE = PIDController(250.0, 0.000, 20.0, 0.0)
+
+            // val STEER_PID_AUTO = PIDController(200.0, 0.000, 20.0, 0.0)
+            @JvmField
+            val STEER_PID_AUTO = PIDController(750.0, 5.000, 15.0, 0.0)
+            // val STEER_PID_AUTO = PIDController(5.0, 0.000, 0.0, 1.0)
 
             @JvmField
-            val ROTATIONAL_PID: Pingu = Pingu(0.2, 0.0, 0.0)
+            val DRIVE_PID_AUTO = PIDController(5.0, 0.0, 0.0, 0.4)
 
             @JvmField
-            val Y_PID: Pingu = Pingu(0.2, 0.0, 0.0)
+            val DRIVE_PID_TELE = PIDController(5.0, 0.0, 0.0, 0.4)
 
             @JvmField
-            val DIST_PID: Pingu = Pingu(0.2, 0.0, 0.0)
-            val PASS_ROTATIONAL_PID: Pingu = Pingu(0.1, 0.0, 0.0)
+            val ROTATIONAL_PID = PIDController(0.2, 0.0, 0.0)
+
+            @JvmField
+            val Y_PID = PIDController(0.2, 0.0, 0.0)
+
+            @JvmField
+            val DIST_PID: PIDController = PIDController(0.2, 0.0, 0.0)
+            val PASS_ROTATIONAL_PID: PIDController = PIDController(0.1, 0.0, 0.0)
 
             var pathFollower: PPHolonomicDriveController =
                 PPHolonomicDriveController(
@@ -103,6 +150,19 @@ object RobotParameters {
             private val BACK_LEFT: Translation2d = Translation2d(-0.3048, 0.3048)
             private val BACK_RIGHT: Translation2d = Translation2d(-0.3048, -0.3048)
 
+            // Motor Property Values
+            const val MAX_SPEED: Double = 5.76
+            const val MAX_ANGULAR_SPEED: Double = (14 * Math.PI) / 3
+            const val STEER_MOTOR_GEAR_RATIO: Double = 150.0 / 7
+            const val DRIVE_MOTOR_GEAR_RATIO: Double = 6.750000000000000
+            const val WHEEL_DIAMETER: Double = 0.1016
+            const val METERS_PER_REV: Double = WHEEL_DIAMETER * Math.PI * 0.975
+
+            // Limit Values
+            const val DRIVE_SUPPLY_LIMIT: Double = 45.0
+            const val DRIVE_STATOR_LIMIT: Double = 80.0
+            const val STEER_SUPPLY_LIMIT: Double = 30.0
+
             @JvmField
             val kinematics: SwerveDriveKinematics =
                 SwerveDriveKinematics(FRONT_LEFT, FRONT_RIGHT, BACK_LEFT, BACK_RIGHT)
@@ -111,16 +171,15 @@ object RobotParameters {
         /** Class containing various thresholds and constants for the swerve drive system.  */
         object Thresholds {
             const val STATE_SPEED_THRESHOLD: Double = 0.05
-            const val CANCODER_VAL9: Double = -0.419189
-            const val CANCODER_VAL10: Double = -0.825928 - 0.5
-            const val CANCODER_VAL11: Double = -0.475098
-            const val CANCODER_VAL12: Double = -0.032959 + 0.5
 
             @JvmField
             val DRIVE_MOTOR_INVERTED: InvertedValue = InvertedValue.CounterClockwise_Positive
 
             @JvmField
             val STEER_MOTOR_INVERTED: InvertedValue = InvertedValue.Clockwise_Positive
+
+            const val TURN_DEADBAND_DEGREES: Double = 0.3
+
             const val JOYSTICK_DEADBAND: Double = 0.05
             const val USING_VISION: Boolean = false
             const val AUTO_ALIGN: Boolean = false

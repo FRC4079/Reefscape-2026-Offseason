@@ -1,7 +1,5 @@
 package frc.robot
 
-import frc.robot.commands.Kommand.drive
-import frc.robot.subsystems.drive.Swerve
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 import org.wpilib.command3.Command
 import org.wpilib.driverstation.Gamepad
@@ -19,7 +17,7 @@ class RobotContainer {
 
     /** The container for the robot. Contains subsystems, IO devices, and commands.  */
     init {
-        Swerve.defaultCommand = drive(pad)
+//        Swerve.defaultCommand = drive(pad)
         configureBindings()
     }
 
