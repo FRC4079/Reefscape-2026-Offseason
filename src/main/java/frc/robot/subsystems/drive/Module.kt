@@ -13,7 +13,6 @@ class Module(
 ) {
     private val driveEnergyKey = "FullDrive/Drive/$index"
     private val turnEnergyKey = "FullDrive/Turn/$index"
-
     private val inputs = ModuleIOInputsAutoLogged()
     private val outputs = ModuleIO.ModuleIOOutputs()
     private val ffModel = SwerveParameters.PIDParameters.DRIVE_FF

@@ -104,7 +104,6 @@ Temporary Items
 .apdisk
 
 ### VisualStudioCode ###
-.vscode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -137,9 +136,8 @@ $RECYCLE.BIN/
 *.lnk
 
 ### Gradle ###
-/build/
 .gradle
-.gradle/
+/build/
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -187,19 +185,3 @@ compile_commands.json
 
 # Eclipse generated file for annotation processors
 .factorypath
-
-# ENV
-*.env
-*.env.local
-.env
-.env.local
-
-.qodo
-
-# Node
-node_modules/
-node_modules
-
-# Kotlin
-.kotlin
-.kotlin/

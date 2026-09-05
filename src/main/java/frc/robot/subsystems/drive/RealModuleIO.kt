@@ -16,7 +16,16 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue
 import com.ctre.phoenix6.signals.InvertedValue
 import com.ctre.phoenix6.signals.NeutralModeValue
 import com.ctre.phoenix6.signals.SensorDirectionValue
+import frc.robot.utils.PhoenixOdometryThread
+import frc.robot.utils.PhoenixUtils
+import frc.robot.utils.PhoenixUtils.tryUntilOk
 import frc.robot.utils.RobotParameters.SwerveParameters
+import org.wpilib.math.geometry.Rotation2d
+import org.wpilib.math.util.Units
+import org.wpilib.units.measure.Angle
+import org.wpilib.units.measure.AngularVelocity
+import org.wpilib.units.measure.Current
+import org.wpilib.units.measure.Voltage
 import java.util.Queue
 import java.util.concurrent.Executors
 
@@ -75,7 +84,7 @@ class ModuleIOComp(
         // Configure turn motor
         turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake
         turnConfig.Slot0 = Slot0Configs().withKP(0.0).withKI(0.0).withKD(0.0)
-        turnConfig.Feedback.FeedbackRemoteSensorID = config.encoderChannel()
+        turnConfig.Feedback.FeedbackRemoteSensorID = config.encoderID
         turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder
         turnConfig.Feedback.RotorToSensorRatio = turnReduction
         turnConfig.ClosedLoopGeneral.ContinuousWrap = true
@@ -84,7 +93,7 @@ class ModuleIOComp(
         turnConfig.CurrentLimits.StatorCurrentLimit = turnCurrentLimitAmps
         turnConfig.CurrentLimits.StatorCurrentLimitEnable = true
         turnConfig.MotorOutput.Inverted =
-            if (config.turnInverted()) {
+            if (config.turnInverted) {
                 InvertedValue.Clockwise_Positive
             } else {
                 InvertedValue.CounterClockwise_Positive
@@ -94,9 +103,9 @@ class ModuleIOComp(
 
         // Configure CANCoder
         val cancoderConfig = CANcoderConfiguration()
-        cancoderConfig.MagnetSensor.MagnetOffset = config.encoderOffset().rotations
+        cancoderConfig.MagnetSensor.MagnetOffset = config.encoderOffset.rotations
         cancoderConfig.MagnetSensor.SensorDirection =
-            if (config.encoderInverted()) {
+            if (config.encoderInverted) {
                 SensorDirectionValue.Clockwise_Positive
             } else {
                 SensorDirectionValue.CounterClockwise_Positive
@@ -122,7 +131,7 @@ class ModuleIOComp(
 
         // Configure periodic frames
         BaseStatusSignal.setUpdateFrequencyForAll(
-            DriveConstants.odometryFrequency,
+            SwerveParameters.OdometryConfig.ODOMETRY_FREQUENCY,
             drivePosition,
             turnPosition,
             turnAbsolutePosition,
@@ -141,8 +150,8 @@ class ModuleIOComp(
         tryUntilOk(5) { ParentDevice.optimizeBusUtilizationForAll(driveTalon, turnTalon, encoder) }
 
         // Register signals for refresh
-        PhoenixUtil.registerSignals(
-            true,
+        PhoenixUtils.registerSignals(
+            false,
             drivePosition,
             driveVelocity,
             driveAppliedVolts,
@@ -159,7 +168,7 @@ class ModuleIOComp(
 
     override fun updateInputs(inputs: ModuleIO.ModuleIOInputs) {
         inputs.data =
-            ModuleIOData(
+            ModuleIO.ModuleIOData(
                 BaseStatusSignal.isAllGood(
                     drivePosition,
                     driveVelocity,

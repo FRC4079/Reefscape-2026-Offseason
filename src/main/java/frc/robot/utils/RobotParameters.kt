@@ -37,6 +37,10 @@ object RobotParameters {
 
     /** Class containing global values related to the swerve drive system.  */
     object SwerveParameters {
+        data object OdometryConfig {
+            const val ODOMETRY_FREQUENCY: Double = 250.0
+        }
+
         @Builder
         data class ModuleConfig(
             val driveMotorId: Int,
