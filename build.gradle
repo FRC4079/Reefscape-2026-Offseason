@@ -1,8 +1,14 @@
+import groovy.json.JsonSlurper
+import org.wpilib.gradlerio.GradleRIOPlugin
+
 plugins {
     id "java"
     id "application"
     id "org.wpilib.GradleRIO" version "2027.0.0-alpha-7"
+    id "com.gradleup.shadow" version "9.3.0"
+    id 'org.jetbrains.kotlin.jvm' version "2.4.10"
 }
+apply plugin: 'kotlin-kapt'
 
 java {
     sourceCompatibility = JavaVersion.VERSION_25
@@ -78,6 +84,11 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    implementation 'org.projectlombok:lombok:1.18.42'
+    def akitJson = new JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
+    kapt "org.littletonrobotics.akit:akit-autolog:${akitJson['version']}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 test {
